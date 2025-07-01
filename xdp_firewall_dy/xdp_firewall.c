@@ -62,14 +62,10 @@ int main(int argc, char **argv)
     }
     printf("XDP program successfully attached on %s (ifindex: %d)\n", ifname, ifindex);
 
-    // 等待用户中断
-    printf("Press Ctrl+C to exit...\n");
-    pause();
-
     int map_fd = bpf_map__fd(skel->maps.blacklist);
     int proto_map_fd = bpf_map__fd(skel->maps.proto_stat_map);
 
-    生成带时间戳的唯一文件名
+    // 生成带时间戳的唯一文件名
     char filename[128];
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
@@ -84,7 +80,7 @@ int main(int argc, char **argv)
     fprintf(fp, "timestamp,protocol,dyn_threshold,byte_count,exceed_duration,exceed_duration_count\n");
 
 
-    周期性读取黑名单 map
+    // 周期性读取黑名单 map
     while (!exiting)
     {
         __u32 key = 0, next_key;
@@ -137,6 +133,11 @@ int main(int argc, char **argv)
         printf("------------1s------------\n");
     }
     fclose(fp);
+
+    // This can be used when there is no need to read and output, waiting for the user to interrupt
+    // printf("Press Ctrl+C to exit...\n");
+    // pause();
+    
 
 cleanup:
     xdp_firewall_bpf__destroy(skel);
