@@ -146,7 +146,7 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
     //  上升快、下降慢
     if (now - stat->last_ts > WINDOW_NS)   
     { 
-        // ⚠️ 先判断是否超阈
+        // ⚠️ 先判断是否超阈  Sliding
         if (stat->byte_count > stat->dyn_threshold)
         {
             // bpf_printk("exceed\n");
@@ -159,7 +159,7 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
                 stat->exceed_duration = 0; //窗口重置再次计数
                 // bpf_printk("window exceed_duration_count: %u\n", stat->exceed_duration_count);
             }
-            // 注意：拉黑操作是不可重入行为，仅在滑窗机制满足后触发一次
+            // 注意：拉黑操作是不可重入行为，仅在滑窗机制满足后触发一次  PGDR
             if(stat->exceed_duration_count >= BLOCK_THRESHOLD ){  //可以拉黑处理了
                 struct blacklist_val bl_val = {.ts_ns = now};
                 bpf_map_update_elem(&blacklist, &src_ip, &bl_val, BPF_ANY);
@@ -180,7 +180,7 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
 
 
         // ✅ 再更新阈值
-        // 指数加权平均更新阈值
+        // 指数加权平均更新阈值 DEWS
         __u64 new_threshold;
         if (stat->byte_count > stat->dyn_threshold)
         {
