@@ -1,3 +1,6 @@
+// This page is useless and can be deleted
+
+
 #include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
