@@ -57,7 +57,7 @@ make
 ### 4️⃣ Attach XDP Program (or run commands manually from Makefile)
 
 ```bash
-sudo ip link set dev eth0 xdp obj AA_xdp_firewall_dy/xdp_defense_kern.o sec xdp
+sudo ip link set dev eth0 xdp obj AA_xdp_firewall_dy/xdp_firewall.bpf.o sec xdp
 ```
 
 ---
