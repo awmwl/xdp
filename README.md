@@ -1,7 +1,3 @@
-当然可以！以下是你的项目 `xdp_ebpf` 的英文版 README，保持技术内容准确的同时，使用了简洁清晰、符合开源社区标准的语气风格：
-
----
-
 # 📦 xdp\_ebpf
 
 An experimental framework for simulating and defending against DDoS attacks using kernel-level **eBPF/XDP**. Includes custom eBPF programs, traffic simulators, environment setup scripts, and supporting tools.
