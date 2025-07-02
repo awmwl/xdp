@@ -84,9 +84,7 @@ Built using:
 
 * [libbpf](https://github.com/libbpf/libbpf)
 * [bpftool](https://github.com/libbpf/bpftool)
-* [ddos_simulation](https://github.com/ricardojoserf/ddos_simulation/tree/master)ddos_simulation_master
+* [ddos_simulation](https://github.com/ricardojoserf/ddos_simulation/tree/master)
 
 ```
-
----
 
