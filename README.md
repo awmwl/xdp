@@ -1,61 +1,61 @@
-当然可以，下面是你项目的结构说明整理成一份清晰的 `README.md` 格式，适用于托管在 GitHub 或作为文档展示：
+当然可以！以下是你的项目 `xdp_ebpf` 的英文版 README，保持技术内容准确的同时，使用了简洁清晰、符合开源社区标准的语气风格：
 
 ---
 
 # 📦 xdp\_ebpf
 
-基于 eBPF + XDP 的网络安全防护实验平台，用于实验模拟 DDoS 攻击与防御策略，包括自定义 eBPF 程序、数据模拟、环境构建与辅助工具。
+An experimental framework for simulating and defending against DDoS attacks using kernel-level **eBPF/XDP**. Includes custom eBPF programs, traffic simulators, environment setup scripts, and supporting tools.
 
 ---
 
-## 📁 项目目录结构
+## 📁 Project Structure
 
 ```bash
 xdp_ebpf/
-├── .build/                      # 构建目录（无需手动修改）
+├── .build/                      # Build artifacts (auto-generated, no manual edits required)
 │   ├── bin/
-│   │   └── bpftool              # 编译完成后的 bpftool 可执行文件
+│   │   └── bpftool              # Compiled bpftool binary
 │   ├── bpftool/
-│   │   └── bpftool              # 原始 bpftool 编译输出
+│   │   └── bpftool              # Raw bpftool build output
 │   └── libbpf/
 │       ├── lib/
-│       │   └── libbpf.a         # 编译生成的 libbpf 静态库
+│       │   └── libbpf.a         # Static libbpf library
 │       └── include/
-│           └── ...              # 所有 eBPF 所需头文件（vmlinux.h、bpf_helpers.h 等）
-├── Makefile                     # 编译主入口，自动生成 eBPF 所需目标文件
-├── setup_deps.sh               # 构建所需依赖的自动化脚本（libbpf/bpftool）
-├── bcc/                         # 可选，BCC 脚本或工具目录
-├── bpftool/                     # bpftool 源码目录（用于编译）
-├── libbpf/                      # libbpf 源码目录（用于编译）
-├── ddos_simulation_master/      # DDoS 攻击模拟工具目录（如 Slowloris/UDP flood 等）
-├── legit_with_burst.sh          # 模拟正常流量 + 偶发突发流量的 shell 脚本
-├── AA_xdp_firewall_dy/          # 主要 eBPF 防御程序及其逻辑所在目录
+│           └── ...              # eBPF headers (e.g., vmlinux.h, bpf_helpers.h)
+├── Makefile                     # Main build entry for compiling eBPF object files
+├── setup_deps.sh               # One-click script for building libbpf and bpftool
+├── bcc/                         # (Optional) BCC-based tools or scripts
+├── bpftool/                     # bpftool source directory
+├── libbpf/                      # libbpf source directory
+├── ddos_simulation_master/     # Tools for generating DDoS attacks (e.g., ICMP/UDP floods)
+├── legit_with_burst.sh         # Simulates normal traffic with occasional bursts
+├── AA_xdp_firewall_dy/         # Core directory containing custom eBPF firewall logic
 ```
 
 ---
 
-## 🛠️ 使用方法
+## 🛠️ Getting Started
 
-### 1️⃣ 环境准备
+### 1️⃣ Install Dependencies
 
 ```bash
 sudo apt update
 sudo apt install -y clang llvm gcc make iproute2 libelf-dev libbpf-dev linux-headers-$(uname -r)
 ```
 
-### 2️⃣ 构建依赖（libbpf + bpftool）
+### 2️⃣ Build libbpf and bpftool
 
 ```bash
 ./setup_deps.sh
 ```
 
-### 3️⃣ 编译 eBPF 防御程序（默认ens33，可修改）
+### 3️⃣ Compile the eBPF Defense Program (default interface: `ens33`, can be customized)
 
 ```bash
 make
 ```
 
-### 4️⃣ 加载和挂载 XDP 程序（示例，如不想一键加载，可分步骤执行makefile中的关键命令，再使用以下命令加载和挂载）
+### 4️⃣ Attach XDP Program (or run commands manually from Makefile)
 
 ```bash
 sudo ip link set dev eth0 xdp obj AA_xdp_firewall_dy/xdp_defense_kern.o sec xdp
@@ -63,17 +63,31 @@ sudo ip link set dev eth0 xdp obj AA_xdp_firewall_dy/xdp_defense_kern.o sec xdp
 
 ---
 
-## 🎯 实验模拟说明
+## 🎯 Simulation Guide
 
-* `ddos_simulation_master/`：包含各类攻击模拟工具（如 Slowloris 等）
-* `legit_with_burst.sh`：模拟合法请求+偶发突发流量，用于验证 eBPF 程序的动态判定能力
-* `AA_xdp_firewall_dy/`：eBPF 程序目录，主要包括防护逻辑实现（如黑名单、动态阈值、评分机制等）
+* `ddos_simulation_master/`: Simulated DDoS attack generators (e.g., UDP/ICMP floods)
+* `legit_with_burst.sh`: Emulates legitimate traffic with occasional spikes
+* `AA_xdp_firewall_dy/`: Core defense logic with dynamic thresholding (DEWS) and probabilistic reaction (PGDR)
+
+---
+
+## 📌 Notes
+
+* This project is intended for **research and educational purposes**, demonstrating how eBPF/XDP can be used for lightweight kernel-space DDoS mitigation.
+* For production use, consider integrating with a **user-space control plane**, **security policy manager**, and **logging system**.
 
 ---
 
-## 📌 说明
 
-* 本项目主要用于科研或教育用途，展示如何通过内核态 eBPF 实现轻量级 DDoS 防护。
-* 若用于生产环境，请配合完整的用户态控制面、安全策略管理和日志系统。
+## ✨ Acknowledgements
+
+Built using:
+
+* [libbpf](https://github.com/libbpf/libbpf)
+* [bpftool](https://github.com/libbpf/bpftool)
+* [ddos_simulation](https://github.com/ricardojoserf/ddos_simulation/tree/master)ddos_simulation_master
+
+```
 
 ---
+
