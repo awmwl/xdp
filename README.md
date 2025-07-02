@@ -43,12 +43,15 @@ sudo apt install -y clang llvm gcc make iproute2 libelf-dev libbpf-dev linux-hea
 
 ```bash
 ./setup_deps.sh
+make
 ```
 
 ### 3️⃣ Compile the eBPF Defense Program (default interface: `ens33`, can be customized)
 
 ```bash
+cd AA_xdp_firewall_dy
 make
+./xdp_firewall
 ```
 
 ### 4️⃣ Attach XDP Program (or run commands manually from Makefile)
