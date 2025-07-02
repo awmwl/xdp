@@ -146,7 +146,7 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
     //  上升快、下降慢
     if (now - stat->last_ts > WINDOW_NS)   
     { 
-        // ⚠️ 先判断是否超阈  Sliding
+        // ⚠️ 先判断是否超阈
         if (stat->byte_count > stat->dyn_threshold)
         {
             // bpf_printk("exceed\n");
@@ -159,7 +159,7 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
                 stat->exceed_duration = 0; //窗口重置再次计数
                 // bpf_printk("window exceed_duration_count: %u\n", stat->exceed_duration_count);
             }
-            // 注意：拉黑操作是不可重入行为，仅在滑窗机制满足后触发一次  PGDR
+            // 注意：拉黑操作是不可重入行为，仅在滑窗机制满足后触发一次
             if(stat->exceed_duration_count >= BLOCK_THRESHOLD ){  //可以拉黑处理了
                 struct blacklist_val bl_val = {.ts_ns = now};
                 bpf_map_update_elem(&blacklist, &src_ip, &bl_val, BPF_ANY);
@@ -180,7 +180,7 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
 
 
         // ✅ 再更新阈值
-        // 指数加权平均更新阈值 DEWS
+        // 指数加权平均更新阈值
         __u64 new_threshold;
         if (stat->byte_count > stat->dyn_threshold)
         {
@@ -214,3 +214,78 @@ int xdp_dynamic_throttle(struct xdp_md *ctx)
     }
     return XDP_PASS;
 }
+
+        // bpf_printk("new in threshold: %u\n", stat->exceed_duration);
+
+        // // 设定一个五秒的滑动窗口
+        // if (stat->exceed_duration < EXCEED_DURATION)
+        // {
+        //     stat->exceed_duration++; // 0->1->2..->5
+        //     bpf_printk("exceed_duration in threshold: %u\n", stat->exceed_duration);
+        // }
+        // else // if(stat->exceed_duration>5)
+        // {
+        //     stat->exceed_duration = 0;
+        // }
+        // bpf_printk("exceed_duration in threshold after: %u\n", stat->exceed_duration);
+        // }
+
+    // 更新阈值就归零，不更新就累积
+    //  字节计数 + 检查阈值
+    // stat->byte_count += pkt_len; // 字节计数便于阈值更新
+    // stat->byte_count ++;
+
+    // 动态判断是否连续超阈值
+    // bpf_printk("BPF check: byte_count=%llu, dyn_threshold=%llu\n", stat->byte_count, stat->dyn_threshold);
+
+    // if (stat->byte_count > stat->dyn_threshold)
+    // {
+    //     // bpf_printk("exceed\n");
+    //      // 如果是超出阈值且在时间窗口内，记录1格
+    //     bpf_printk("window exceed_duration: %u\n",stat->exceed_duration);
+    //     if (stat->exceed_duration >= 1 && stat->exceed_duration <= 5)  //1->2..->5
+    //     {
+    //         stat->exceed_duration_count++;   //0->1->2..->5
+    //         bpf_printk("window exceed_duration_count: %u\n",stat->exceed_duration_count);
+    //     }
+    //     // if(stat->exceed_duration_count >= 5){
+    //     //     bpf_printk("exceed_duration_count: %u\n",stat->exceed_duration_count);
+    //     //     stat->exceed_count += 1; //说明已经超过了一个持续5s的窗口了
+    //     //     bpf_printk("exceed_count: %u\n",stat->exceed_count);
+    //     //     stat->exceed_duration = 0 ; //窗口重置再次计数
+    //     // }
+
+    //     // else if(now - stat->exceed_duration >= EXCEED_DURATION){
+    //     //     stat->exceed_count += 1;
+    //     //     stat->exceed_duration = now;
+
+    //     // 超过阈值了，再判断持续的时间窗口
+    //     // if (now - stat->exceed_duration >= EXCEED_DURATION){
+    //         // stat->exceed_count += 1;
+    //         // stat->exceed_duration = now;
+    //     // }
+
+    //     // stat->exceed_duration = bpf_ktime_get_ns();
+
+    //     // 若连续 BLOCK_THRESHOLD 个 EXCEED_DURATION 内都超阈值 → 拉黑；
+    //     if (stat->exceed_duration_count >= BLOCK_THRESHOLD){
+    //         stat->exceed_duration = 0;
+    //         stat->exceed_duration_count = 0;
+    //         struct blacklist_val bl_val = {.ts_ns = now};
+    //         bpf_map_update_elem(&blacklist, &src_ip, &bl_val, BPF_ANY);
+    //         return XDP_DROP;
+    //     }
+    // }
+    // else{
+    //     // 未超过阈值，重置滑动窗口
+    //     stat->exceed_duration = 0;  //未超过阈值，时间窗口重新计数
+    //     stat->exceed_duration_count = 0 ;
+    //     // bpf_printk("not exceed\n");
+    // }
+
+    // 封锁条件（关键）：
+    // 短期异常 spike：动态阈值上浮容忍。
+    // 持续性偏离 + 超出安全容忍区间：判定为攻击 → 加入黑名单 or 丢弃包。
+
+//     return XDP_PASS;
+// }

@@ -18,6 +18,7 @@ LIBBPF_A := $(LIBBPF_OBJ)/libbpf.a
 LIBELF_A := /usr/lib/x86_64-linux-gnu/libelf.a
 LIBZ_A   := /usr/lib/x86_64-linux-gnu/libz.a
 LIBZSTD_A := /usr/lib/x86_64-linux-gnu/libzstd.a
+
 PROM_A := /usr/local/lib/libprom.a
 PROMHTTP_A := /usr/local/lib/libpromhttp.a
 

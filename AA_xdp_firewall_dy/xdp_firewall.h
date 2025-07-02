@@ -19,9 +19,9 @@
 #define THRESHOLD_MIN 50 * 1024 // 最小动态阈值：防止阈值降到过低
 #define TCP_FLOOD_THRESHOLD 100000  // 每秒最多允许 TCP 数据包数
 
-#define BLOCK_THRESHOLD 1  // 连续超过3次滑动时间窗口触发黑名单
+#define BLOCK_THRESHOLD 3  // 连续超过3次滑动时间窗口触发黑名单
 // #define EXCEED_DURATION (5ULL * 1000000000ULL)  //持续性时间窗口
-#define EXCEED_DURATION 1 //滑动时间窗口，1000个ms是1S
+#define EXCEED_DURATION 5 //滑动时间窗口，1000个ms是1S
 #define BYTE_DURATION 1000 // 1000个ms是1S
 
 #define WINDOW_NS (1ULL * 1000000000ULL)
