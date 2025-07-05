@@ -1,4 +1,4 @@
-# 📦 xdp\_ebpf
+# 📦 xdp\_ebpf\_ddos
 
 An experimental framework for simulating and defending against DDoS attacks using kernel-level **eBPF/XDP**. Includes custom eBPF programs, traffic simulators, environment setup scripts, and supporting tools.
 
