@@ -25,6 +25,7 @@ xdp_ebpf/
 ├── libbpf/                      # libbpf source directory
 ├── ddos_simulation_master/     # Tools for generating DDoS attacks (e.g., ICMP/UDP floods)
 ├── legit_with_burst.sh         # Simulates normal traffic with occasional bursts
+├── run_attack.sh               # Self-written dos attack script
 ├── AA_xdp_firewall_dy/         # Core directory containing custom eBPF firewall logic
 ```
 
